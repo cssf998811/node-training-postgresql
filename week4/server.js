@@ -59,6 +59,14 @@ const requestListener = async (req, res) => {
           }))
           res.end()
           return
+        } else if (!Number.isInteger(data.credit_amount) || data.credit_amount <= 0) {
+          res.writeHead(422, headers)
+          res.write(JSON.stringify({
+            status: "failed",
+            message: "credit_amount 必須為正整數"
+          }))
+          res.end()
+          return
         }
         const creditPackageRepo = await AppDataSource.getRepository("CreditPackage")
         const existPackage = await creditPackageRepo.find({
