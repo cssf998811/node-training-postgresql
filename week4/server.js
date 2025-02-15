@@ -34,7 +34,12 @@ const requestListener = async (req, res) => {
       res.writeHead(200, headers)
       res.write(JSON.stringify({
         status: "success",
-        data: packages
+        data: {
+          id: packages.id,
+          name: packages.name,
+          credit_amount: packages.credit_amount,
+          price: packages.price
+        }
       }))
       res.end()
     } catch (error) {
@@ -92,7 +97,12 @@ const requestListener = async (req, res) => {
         res.writeHead(200, headers)
         res.write(JSON.stringify({
           status: "success",
-          data: result
+          data: {
+            id: result.id,
+            name: result.name,
+            credit_amount: result.credit_amount,
+            price: result.price
+          }
         }))
         res.end()
       } catch (error) {
@@ -195,7 +205,10 @@ const requestListener = async (req, res) => {
         res.writeHead(200, headers)
         res.write(JSON.stringify({
           status: "success",
-          data: result
+          data: {
+            id: result.id,
+            name: result.name,
+          }
         }))
         res.end()
       } catch (error) {
