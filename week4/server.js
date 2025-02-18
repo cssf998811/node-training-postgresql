@@ -274,9 +274,7 @@ const server = http.createServer(requestListener)
 
 async function startServer () {
   await AppDataSource.initialize()
-  console.log("資料庫連接成功")
   server.listen(process.env.PORT)
-  console.log(`伺服器啟動成功, port: ${process.env.PORT}`)
   return server;
 }
 
