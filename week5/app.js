@@ -2,7 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const pinoHttp = require('pino-http')
-const moment = require('moment');
 
 const logger = require('./utils/logger')('App')
 const adminRouter = require('./routes/admin')
@@ -12,6 +11,7 @@ const coachesRouter = require('./routes/coaches')
 const skillRouter = require('./routes/skill')
 
 const app = express()
+app.use(express.json({ limit: "10mb", type: "application/json", charset: "utf-8" }));
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

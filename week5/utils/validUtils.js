@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 function isUndefined(value) {
   return value === undefined;
 }
@@ -11,8 +13,9 @@ function isNotValidInteger(value) {
 }
 
 function areValidDates(startAt, endAt) {
-  const start = moment(startAt, 'YYYY-MM-DD HH:mm:ss.SSS', true);
-  const end = moment(endAt, 'YYYY-MM-DD HH:mm:ss.SSS', true);
+  const format = 'YYYY-MM-DD HH:mm:ss';
+  const start = moment(startAt, format, true);
+  const end = moment(endAt, format, true);
 
   return start.isValid() && end.isValid() && start.isBefore(end);
 }

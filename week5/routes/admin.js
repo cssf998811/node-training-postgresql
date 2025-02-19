@@ -27,6 +27,7 @@ router.post('/coaches/courses', async (req, res, next) => {
       })
       return
     }
+
     const userRepository = dataSource.getRepository('User')
     const existingUser = await userRepository.findOne({
       select: ['id', 'name', 'role'],
