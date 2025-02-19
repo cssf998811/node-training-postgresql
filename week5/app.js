@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const pinoHttp = require('pino-http')
+const moment = require('moment');
 
 const logger = require('./utils/logger')('App')
 const adminRouter = require('./routes/admin')

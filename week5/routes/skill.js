@@ -4,14 +4,7 @@ const router = express.Router()
 const { dataSource } = require('../db/data-source')
 
 const logger = require('../utils/logger')('Skill')
-
-function isUndefined (value) {
-  return value === undefined
-}
-
-function isNotValidSting (value) {
-  return typeof value !== 'string' || value.trim().length === 0 || value === ''
-}
+const {isUndefined, isNotValidString} = require('../utils/validUtils')
 
 router.get('/', async (req, res, next) => {
   try {
@@ -31,7 +24,7 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { name } = req.body
-    if (isUndefined(name) || isNotValidSting(name)) {
+    if (isUndefined(name) || isNotValidString(name)) {
       res.status(400).json({
         status: 'failed',
         message: '欄位未填寫正確'
@@ -67,8 +60,8 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:skillId', async (req, res, next) => {
   try {
-    const skillId = req.url.split('/').pop()
-    if (isUndefined(skillId) || isNotValidSting(skillId)) {
+    const skillId = req.params
+    if (isUndefined(skillId) || isNotValidString(skillId)) {
       res.status(400).json({
         status: 'failed',
         message: 'ID錯誤'

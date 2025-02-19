@@ -3,18 +3,7 @@ const express = require('express')
 const router = express.Router()
 const { dataSource } = require('../db/data-source')
 const logger = require('../utils/logger')('Admin')
-
-function isUndefined (value) {
-  return value === undefined
-}
-
-function isNotValidSting (value) {
-  return typeof value !== 'string' || value.trim().length === 0 || value === ''
-}
-
-function isNotValidInteger (value) {
-  return typeof value !== 'number' || value < 0 || value % 1 !== 0
-}
+const {isUndefined, isNotValidString, isNotValidInteger, areValidDates} = require('../utils/validUtils')
 
 router.post('/coaches/courses', async (req, res, next) => {
   try {
@@ -22,14 +11,15 @@ router.post('/coaches/courses', async (req, res, next) => {
       user_id: userId, skill_id: skillId, name, description, start_at: startAt, end_at: endAt,
       max_participants: maxParticipants, meeting_url: meetingUrl
     } = req.body
-    if (isUndefined(userId) || isNotValidSting(userId) ||
-      isUndefined(skillId) || isNotValidSting(skillId) ||
-      isUndefined(name) || isNotValidSting(name) ||
-      isUndefined(description) || isNotValidSting(description) ||
-      isUndefined(startAt) || isNotValidSting(startAt) ||
-      isUndefined(endAt) || isNotValidSting(endAt) ||
+    if (isUndefined(userId) || isNotValidString(userId) ||
+      isUndefined(skillId) || isNotValidString(skillId) ||
+      isUndefined(name) || isNotValidString(name) ||
+      isUndefined(description) || isNotValidString(description) ||
+      isUndefined(startAt) || isNotValidString(startAt) ||
+      isUndefined(endAt) || isNotValidString(endAt) ||
       isUndefined(maxParticipants) || isNotValidInteger(maxParticipants) ||
-      isUndefined(meetingUrl) || isNotValidSting(meetingUrl) || !meetingUrl.startsWith('https')) {
+      isUndefined(meetingUrl) || isNotValidString(meetingUrl) || !meetingUrl.startsWith('https') ||
+      !areValidDates(startAt, endAt)) {
       logger.warn('欄位未填寫正確')
       res.status(400).json({
         status: 'failed',
@@ -91,14 +81,15 @@ router.put('/coaches/courses/:courseId', async (req, res, next) => {
       skill_id: skillId, name, description, start_at: startAt, end_at: endAt,
       max_participants: maxParticipants, meeting_url: meetingUrl
     } = req.body
-    if (isNotValidSting(courseId) ||
-      isUndefined(skillId) || isNotValidSting(skillId) ||
-      isUndefined(name) || isNotValidSting(name) ||
-      isUndefined(description) || isNotValidSting(description) ||
-      isUndefined(startAt) || isNotValidSting(startAt) ||
-      isUndefined(endAt) || isNotValidSting(endAt) ||
+    if (isNotValidString(courseId) ||
+      isUndefined(skillId) || isNotValidString(skillId) ||
+      isUndefined(name) || isNotValidString(name) ||
+      isUndefined(description) || isNotValidString(description) ||
+      isUndefined(startAt) || isNotValidString(startAt) ||
+      isUndefined(endAt) || isNotValidString(endAt) ||
       isUndefined(maxParticipants) || isNotValidInteger(maxParticipants) ||
-      isUndefined(meetingUrl) || isNotValidSting(meetingUrl) || !meetingUrl.startsWith('https')) {
+      isUndefined(meetingUrl) || isNotValidString(meetingUrl) || !meetingUrl.startsWith('https') ||
+      areValidDates(startAt, endAt)) {
       logger.warn('欄位未填寫正確')
       res.status(400).json({
         status: 'failed',
@@ -154,9 +145,10 @@ router.put('/coaches/courses/:courseId', async (req, res, next) => {
 
 router.post('/coaches/:userId', async (req, res, next) => {
   try {
+    const imageUrlPattern = /\.(jpg|jpeg|png)$/i;
     const { userId } = req.params
     const { experience_years: experienceYears, description, profile_image_url: profileImageUrl = null } = req.body
-    if (isUndefined(experienceYears) || isNotValidInteger(experienceYears) || isUndefined(description) || isNotValidSting(description)) {
+    if (isUndefined(experienceYears) || isNotValidInteger(experienceYears) || isUndefined(description) || isNotValidString(description)) {
       logger.warn('欄位未填寫正確')
       res.status(400).json({
         status: 'failed',
@@ -164,11 +156,19 @@ router.post('/coaches/:userId', async (req, res, next) => {
       })
       return
     }
-    if (profileImageUrl && !isNotValidSting(profileImageUrl) && !profileImageUrl.startsWith('https')) {
+    if (profileImageUrl && !isNotValidString(profileImageUrl) && !profileImageUrl.startsWith('https')) {
       logger.warn('大頭貼網址錯誤')
       res.status(400).json({
         status: 'failed',
         message: '欄位未填寫正確'
+      })
+      return
+    }
+    if(!imageUrlPattern.test(profileImageUrl)){
+      logger.warn('大頭貼格式錯誤')
+      res.status(400).json({
+        status: 'failed',
+        message: '大頭貼格式錯誤，僅接受.jpg, .jpeg, .png等格式'
       })
       return
     }

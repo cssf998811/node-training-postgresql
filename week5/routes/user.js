@@ -4,16 +4,9 @@ const bcrypt = require('bcrypt')
 const router = express.Router()
 const { dataSource } = require('../db/data-source')
 const logger = require('../utils/logger')('Users')
+const {isUndefined, isNotValidString} = require('../utils/validUtils')
 
 const saltRounds = 10
-
-function isUndefined (value) {
-  return value === undefined
-}
-
-function isNotValidSting (value) {
-  return typeof value !== 'string' || value.trim().length === 0 || value === ''
-}
 
 // 新增使用者
 router.post('/signup', async (req, res, next) => {
@@ -21,7 +14,7 @@ router.post('/signup', async (req, res, next) => {
     const passwordPattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}/
     const { name, email, password } = req.body
     // 驗證必填欄位
-    if (isUndefined(name) || isNotValidSting(name) || isUndefined(email) || isNotValidSting(email) || isUndefined(password) || isNotValidSting(password)) {
+    if (isUndefined(name) || isNotValidString(name) || isUndefined(email) || isNotValidString(email) || isUndefined(password) || isNotValidString(password)) {
       logger.warn('欄位未填寫正確')
       res.status(400).json({
         status: 'failed',
