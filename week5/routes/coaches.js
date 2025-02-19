@@ -8,9 +8,10 @@ const { isNotValidInteger, isNotValidString } = require("../utils/validUtils");
 
 router.get("/", async (req, res, next) => {
   try {
-    const { per, page } = req.query;
-    if (isNotValidString(per) || isNotValidString(page) ||
-        isNotValidInteger(parseInt(per)) || isNotValidInteger(parseInt(page))) {
+    const per = parseInt(req.query.per) || 10;  // 預設值為 10
+    const page = parseInt(req.query.page) || 1; // 預設值為 1
+
+    if (isNotValidInteger(per) || isNotValidInteger(page)) {
       res.status(400).json({
         status: "failed",
         message: "欄位未填寫正確",
@@ -29,8 +30,8 @@ router.get("/", async (req, res, next) => {
       relations: {
         user: true, // 確保關聯的 `User` 資料一起載入
       },
-      skip: (parseInt(page) - 1) * parseInt(per), // 跳過前 (page-1)*per 筆資料
-      take: parseInt(per), // 限制回傳筆數
+      skip: (page - 1) * per, // 跳過前 (page-1)*per 筆資料
+      take: per, // 限制回傳筆數
     });
 
     const formattedCoaches = coaches.map(coach => ({
