@@ -20,9 +20,15 @@ function areValidDates(startAt, endAt) {
   return start.isValid() && end.isValid() && start.isBefore(end);
 }
 
+function isValidPassword(password) {
+  const passwordPattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}/
+  return passwordPattern.test(password)
+}
+
 module.exports = {
     isUndefined,
     isNotValidString,
     isNotValidInteger,
-    areValidDates
+    areValidDates,
+    isValidPassword
 }
