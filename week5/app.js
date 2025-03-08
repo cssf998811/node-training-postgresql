@@ -33,8 +33,8 @@ app.get('/healthcheck', (req, res) => {
 app.use('/api/admin', adminRouter)
 app.use('/api/users', userRouter)
 app.use('/api/credit-package', creditPackageRouter)
-app.use('/api/coaches', coachesRouter)
 app.use('/api/coaches/skill', skillRouter)
+app.use('/api/coaches', coachesRouter)
 
 // 404
 app.use((req, res, next) => {
